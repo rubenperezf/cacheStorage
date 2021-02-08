@@ -1,0 +1,35 @@
+if (isEmpty(this.props.authenticatedUser)) {
+      // check for token in cache storage
+
+      const tokenData = await getToken()
+      if (tokenData) {
+        this.props
+          .dispatch(magicLink(tokenData))
+          .then(() => {
+            setTimeout(() => {
+              this.setState({
+                renderRouter: true
+              })
+            }, 150)
+          })
+          .catch(err => {
+            console.error(err)
+            this.setState({
+              renderRouter: true
+            })
+          })
+      } else {
+        this.setState({
+          renderRouter: true
+        })
+      }
+    } else {
+      this.props
+        .dispatch(getMagicLink(this.props.authenticatedUser.id))
+        .then(res => {
+          saveToken(res.magic_link)
+        })
+      this.setState({
+        renderRouter: true
+      })
+    }
